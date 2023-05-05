@@ -5,12 +5,9 @@ from config import postgresqlConfig
 import psycopg2
 from util.logz import create_logger
 
-class Contribuyente(Resource):    
-    # def __init__(self):
-    #     self.logger = create_logger('')
+class Contribuyente(Resource):       
     
-    
-    def post(self):        
+    def post(self):#se siempre al metodo post y se pregunta el tipo de operacion para cada caso     
         try:
             conn = psycopg2.connect(postgresqlConfig)
             cur = conn.cursor()
@@ -23,8 +20,9 @@ class Contribuyente(Resource):
                 mescierre=request.json['mescierre'], 
                 razonsocial=request.json['razonsocial'], 
                 ruc=request.json['ruc'],                 
-            )            
-            if contribuyente.operacion == "getall" and contribuyente.id == None:                
+            )
+            
+            if contribuyente.operacion == "getall" and contribuyente.id == None: #se se llama desde el cliente al metodo getall entonces traer todos los contribuyentes
                 query = f"SELECT categoria, dv, estado, mescierre, razonsocial, ruc FROM contribuyente;"
                 cur.execute(query)
                 result = cur.fetchall()
@@ -44,7 +42,7 @@ class Contribuyente(Resource):
                 else:
                     return {'Codigo':'404', 'Descripcion': 'Contribuyente no encontrado', 'Contribuyente': results}, 404
             
-            elif contribuyente.operacion == "getbyid" and contribuyente.id != None:
+            elif contribuyente.operacion == "getbyid" and contribuyente.id != None: #se se llama desde el cliente al metodo getbyid entonces devuelve el id del contribuyente buscado
                 query = "SELECT categoria, dv, estado, mescierre, razonsocial, ruc FROM contribuyente where id = {};".format(contribuyente.id)
                 cur.execute(query)
                 result = cur.fetchall()
@@ -58,13 +56,12 @@ class Contribuyente(Resource):
                         'razonsocial': row[4],
                         'ruc': row[5],
                     })
-                #return {'Contribuyents': results}
                 if results:
                     return {'Codigo':'200', 'Descripcion': 'Contribuyente encontrado', 'Contribuyente': results}, 200
                 else:
                     return {'Codigo':'404', 'Descripcion': 'Contribuyente no encontrado', 'Contribuyente': results}, 404
             
-            elif contribuyente.operacion == "getbyruc" and contribuyente.ruc != "":
+            elif contribuyente.operacion == "getbyruc" and contribuyente.ruc != "":#se se llama desde el cliente al metodo getbyruc entonces devuelve el contribuyenteque coincide con el ruc filtrado
                 query = "SELECT categoria, dv, estado, mescierre, razonsocial, ruc FROM contribuyente where ruc ilike '%{}%';".format(contribuyente.ruc)
                 cur.execute(query)
                 result = cur.fetchall()
@@ -83,7 +80,7 @@ class Contribuyente(Resource):
                 else:
                     return {'Codigo':'404', 'Descripcion': 'Contribuyente no encontrado', 'Contribuyente': results}, 404
             
-            elif contribuyente.operacion == "postinsert":
+            elif contribuyente.operacion == "postinsert":#se se llama desde el cliente al metodo postinsert para insertar o agregar un nuevo contribuyente
                 try:
                     query = "SELECT categoria, dv, estado, mescierre, razonsocial, ruc FROM contribuyente where ruc = '{}';".format(contribuyente.ruc)
                     cur.execute(query)
@@ -109,7 +106,7 @@ class Contribuyente(Resource):
                     conn.rollback()
                     return {'Codigo':'400', 'Descripcion': "Ha ocurrido un error al insertar.", 'Contribuyente': contribuyente}, 500
             
-            elif contribuyente.operacion == "postupdate":
+            elif contribuyente.operacion == "postupdate":#se se llama desde el cliente al metodo postupdate para modificar el contribuyente eleccionado
                 if contribuyente.id == None:
                     return {'Codigo':'400', 'Descripcion': 'El id no puede quedar vacío', 'Contribuyente': ''}, 400       
                 query = """
