@@ -1,0 +1,23 @@
+#crear entorno virtual
+python3 -m venv env
+
+#activar el entorno virtual creado
+source env/bin/activate
+
+#instalar flask en el entorno virtual creado
+pip install flask
+
+#para ver version de flask
+python -c "import flask; print(flask.__version__)"
+
+#Crear una aplicación básica
+nano hello.py
+
+#Para ejecutar su aplicación web, primero indicará a Flask dónde encontrar la aplicación (el archivo hello.py en su caso) con la variable de entorno FLASK_APP:
+export FLASK_APP=hello
+
+#A continuación, ejecútela en modo de desarrollo con la variable de entorno FLASK_ENV:
+export FLASK_ENV=development
+
+#Por último, ejecute la aplicación usando el comando flask run:
+flask run
