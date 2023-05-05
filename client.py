@@ -53,8 +53,19 @@ while(loop == True):
 #########################################################################################################
 
     if accion == '1':
+        data = {
+                "operacion":"getall",
+                "id": None,
+                "ruc": "",
+                "categoria": "",
+                "dv": "",
+                "estado": "",
+                "mescierre": "",
+                "razonsocial": ""
+            }
+        headers = {"Content-Type": "application/json"}
         url = base_url 
-        response = requests.request("GET", url)
+        response = requests.request("POST", url, data = json.dumps(data), headers = headers)
         if response.status_code == 200:
             data = response.json()
             json_data = json.dumps(data)
