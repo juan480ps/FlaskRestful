@@ -3,8 +3,13 @@ from models.contribuyente import ContribuyenteModel
 from flask import request
 from config import postgresqlConfig
 import psycopg2
+from util.logz import create_logger
 
-class Contribuyente(Resource):
+class Contribuyente(Resource):    
+    # def __init__(self):
+    #     self.logger = create_logger('')
+    
+    
     def post(self):        
         try:
             conn = psycopg2.connect(postgresqlConfig)
@@ -34,6 +39,7 @@ class Contribuyente(Resource):
                         'ruc': row[5],
                     })
                 if results:
+                    self.logger = create_logger(contribuyente.operacion)
                     return {'Codigo':'200', 'Descripcion': 'Contribuyente encontrado', 'Contribuyente': results}, 200
                 else:
                     return {'Codigo':'404', 'Descripcion': 'Contribuyente no encontrado', 'Contribuyente': results}, 404
@@ -138,5 +144,8 @@ class Contribuyente(Resource):
             conn.close()
 
 class ContribuyenteList(Resource):
+    def __init__(self):
+        self.logger = create_logger()
+        
     def get(self):        
         return {'Codigo':'400', 'Descripcion': "Ha ocurrido un error al insertar.", 'Contribuyente': [contribuyente.json() for contribuyente in ContribuyenteModel.query.all()]}

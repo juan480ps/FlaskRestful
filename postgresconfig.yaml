@@ -1,0 +1,4 @@
+host: localhost
+user: jcorrea 
+passwd: jcorrea
+db: cliente
