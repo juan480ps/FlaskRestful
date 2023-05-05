@@ -71,8 +71,8 @@ while(loop == True):
             json_data = json.dumps(data)
             data = json.loads(json_data)
             table = PrettyTable()
-            table.field_names = data['Contribuyentes'][0].keys()
-            for contribuyente in data['Contribuyentes']:
+            table.field_names = data['Contribuyente'][0].keys()
+            for contribuyente in data['Contribuyente']:
                 table.add_row(contribuyente.values())
             print(table)
         else:
