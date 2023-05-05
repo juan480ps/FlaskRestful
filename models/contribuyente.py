@@ -1,6 +1,5 @@
 from db import db
 
-
 class ContribuyenteModel(db.Model):   
     __tablename__ = 'contribuyente'
 
@@ -10,9 +9,7 @@ class ContribuyenteModel(db.Model):
     estado = db.Column(db.String(256), nullable=False)
     mescierre = db.Column(db.String(256), nullable=False)
     razonsocial = db.Column(db.String(256), nullable=False)
-    ruc = db.Column(db.String(256), nullable=False)
-    operacion = ""
-    
+    ruc = db.Column(db.String(256), nullable=False)    
 
     def __str__(self):
         return self.razonsocial

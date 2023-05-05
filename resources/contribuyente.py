@@ -8,23 +8,6 @@ class Contribuyente(Resource):
 
     def post(self):        
         try:
-            conn = psycopg2.connect(postgresqlConfig)
-            cur = conn.cursor()
-            query = f"SELECT categoria, dv, estado, mescierre, razonsocial, ruc FROM contribuyente;"
-            cur.execute(query)
-            result = cur.fetchall()
-            cur.close()
-            conn.close()
-            results = []
-            for row in result:
-                results.append({
-                    'id': row[0],
-                    'name': row[1],
-                    'age': row[2]
-                })
-            return {'results': results}
-
-                
             contribuyente = ContribuyenteModel(
                     operacion = request.json['operacion'], 
                     categoria = request.json['categoria'], 
