@@ -1,6 +1,7 @@
 from db import db
 
-class ContribuyenteModel(db.Model):
+
+class ContribuyenteModel(db.Model):   
     __tablename__ = 'contribuyente'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -10,17 +11,20 @@ class ContribuyenteModel(db.Model):
     mescierre = db.Column(db.String(256), nullable=False)
     razonsocial = db.Column(db.String(256), nullable=False)
     ruc = db.Column(db.String(256), nullable=False)
+    operacion = ""
+    
 
     def __str__(self):
         return self.razonsocial
 
-    def __init__(self, categoria, dv, estado, mescierre, razonsocial, ruc):
+    def __init__(self, categoria, dv, estado, mescierre, razonsocial, ruc, operacion):
         self.categoria = categoria
         self.dv = dv
         self.estado = estado
         self.mescierre = mescierre
         self.razonsocial = razonsocial
         self.ruc = ruc
+        self.operacion = operacion
 
     def json(self):
         return {
@@ -39,4 +43,6 @@ class ContribuyenteModel(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+    
 

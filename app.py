@@ -1,3 +1,4 @@
+import logging
 from flask import Flask
 from flask_restful import Api
 from config import postgresqlConfig
@@ -16,11 +17,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = postgresqlConfig #importar la configurac
 
 db.init_app(app)
 
-api.add_resource(Contribuyente, '/test/<string:name>')
-api.add_resource(ContribuyenteList, '/api/contribuyente/')
+api.add_resource(Contribuyente, '/api/contribuyente/')
+#api.add_resource(ContribuyenteList, '/api/contribuyente/')
 
 try:
     if __name__ == '__main__':
+        logging.debug('This message should go to the log file')
         app.run(debug=False)
 except Exception as e:
     print(str(e)) 
