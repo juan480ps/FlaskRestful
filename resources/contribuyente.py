@@ -1,58 +1,62 @@
-from flask_restful import Resource, abort, reqparse
+from flask_restful import Resource
 from models.contribuyente import ContribuyenteModel
-from resources.errors import InternalServerError, ContribuyenteNotExistsError
-from psycopg2 import DatabaseError
-from flask import request as req
-#token
-#from flask_jwt_extended import jwt_required
-    
+from flask import request
+from config import postgresqlConfig
+import psycopg2
 
-class Contribuyente(Resource):
+class Contribuyente(Resource):   
 
-    # def get(self, name):
-    #     item = ContribuyenteModel.find_by_name(name)
-    #     if item:
-    #         return item.json()
-    #     return {'message': 'Item not found'}, 404
-    
-    parser = reqparse.RequestParser()
-    parser.add_argument('ruc', type = str, required = True,
-                            help = 'El RUC no puede quedar en blanco', location='json')
-    parser.add_argument('razonsocial', type = str, required = True,
-                        help = 'La razón social no puede quedar en blanco', location='json')
-
-    #@jwt_required()  # Requires dat token
-    def get(self, name):
+    def post(self):        
         try:
-            contribuyente = ContribuyenteModel.find_by_name(name)
-            if contribuyente:
-                return contribuyente.json()
-            else:
-                return {'message': 'Contribuyente no encontrado'}, 404
-        except DatabaseError:
-            raise ContribuyenteNotExistsError
-        except Exception:
-            raise InternalServerError
+            conn = psycopg2.connect(postgresqlConfig)
+            cur = conn.cursor()
+            query = f"SELECT categoria, dv, estado, mescierre, razonsocial, ruc FROM contribuyente;"
+            cur.execute(query)
+            result = cur.fetchall()
+            cur.close()
+            conn.close()
+            results = []
+            for row in result:
+                results.append({
+                    'id': row[0],
+                    'name': row[1],
+                    'age': row[2]
+                })
+            return {'results': results}
 
-    #@jwt_required()
-    def post(self, name):
-        if ContribuyenteModel.find_by_name(name):
-            return {'message': "El contribuyente '{}' ya existe.".format(
-                name)}, 400  
-        try:
-            item = ContribuyenteModel(
-            categoria = req.json['categoria'], 
-            dv=req.json['dv'], 
-            estado=req.json['estado'], 
-            mescierre=req.json['mescierre'], 
-            razonsocial=req.json['razonsocial'], 
-            ruc=req.json['ruc'], 
-        )
-            item.save_to_db()
+                
+            contribuyente = ContribuyenteModel(
+                    operacion = request.json['operacion'], 
+                    categoria = request.json['categoria'], 
+                    dv=request.json['dv'], 
+                    estado=request.json['estado'], 
+                    mescierre=request.json['mescierre'], 
+                    razonsocial=request.json['razonsocial'], 
+                    ruc=request.json['ruc'], 
+                )            
+            if contribuyente.operacion == "get":
+                contribuyente = ContribuyenteModel.find_by_name(contribuyente.razonsocial)
+                if contribuyente:
+                    return {'Codigo':'200', 'Descripcion': 'Contribuyente encontrado', 'Contribuyente': contribuyente.json()}, 200
+                else:
+                    return {'Codigo':'404', 'Descripcion': 'Contribuyente no encontrado', 'Contribuyente': contribuyente.json()}, 404
+            elif contribuyente.operacion == "post":
+                try:
+                    if ContribuyenteModel.find_by_name(contribuyente.razonsocial):
+                        contribuyente = ContribuyenteModel.find_by_name(contribuyente.razonsocial)                
+                        return {'Codigo':'400', 'Descripcion': "El contribuyente '{}' ya existe.".format(contribuyente.razonsocial), 'Contribuyente': contribuyente.json()}, 400  
+                    else:
+                        contribuyente.save_to_db()
+                        print("insertado")
+                        return {'Codigo':'200', "Descripcion": "Contribuyente insertado con exito.", 'Contribuyente': contribuyente.json()}, 200
+                except Exception as e:
+                    print(str(e))
+                    return {'Codigo':'400', 'Descripcion': "Ha ocurrido un error al insertar.", 'Contribuyente': contribuyente.json()}, 500
+            
         except Exception as e:
-            return {"message": "Ha ocurrido un error al insertar." + str(e)}, 500
-        
+            print(str(e))
+            return {'Codigo':'400', 'Descripcion': 'Error al procesar la solicitud', 'Contribuyente': ''}, 400       
     
 class ContribuyenteList(Resource):
     def get(self):        
-        return {'Contribuyentes': [contribuyente.json() for contribuyente in ContribuyenteModel.query.all()]}
+        return {'Codigo':'400', 'Descripcion': "Ha ocurrido un error al insertar.", 'Contribuyente': [contribuyente.json() for contribuyente in ContribuyenteModel.query.all()]}
