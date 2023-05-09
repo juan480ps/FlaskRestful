@@ -1,4 +1,4 @@
-from db import db
+from db.db import db
 
 class ContribuyenteModel():   
     __tablename__ = 'contribuyente'
