@@ -5,7 +5,10 @@ from flask import request
 from db.config import postgresqlConfig
 
 class Contribuyente(Resource):    
-    def post(self):#se siempre al metodo post y se pregunta el tipo de operacion para cada caso     
+    
+    def post(self):#se siempre al metodo post y se pregunta el tipo de operacion para cada caso    
+        respuesta = "" 
+        item = {}
         try:
             conn = psycopg2.connect(postgresqlConfig)
             cur = conn.cursor()
@@ -19,7 +22,8 @@ class Contribuyente(Resource):
                 razonsocial = request.json['razonsocial'], 
                 ruc = request.json['ruc'],                 
             )
-            if contribuyente.operacion == "getall" and contribuyente.id == None: #se se llama desde el cliente al metodo getall entonces traer todos los contribuyentes
+            logging.debug(request.json)
+            if contribuyente.operacion == "getall" and (contribuyente.id == None or contribuyente.id == ''): #se se llama desde el cliente al metodo getall entonces traer todos los contribuyentes
                 try:
                     logging.debug("Entro getall")
                     logging.debug(request.headers)
@@ -152,7 +156,7 @@ class Contribuyente(Resource):
                 
             elif contribuyente.operacion == "postdelete":#se se llama desde el cliente al metodo postdelete para eliminar el contribuyente eleccionado
                 try:
-                    if contribuyente.id == None:
+                    if contribuyente.id == None or contribuyente.id == '':
                         respuesta = {'codigo':'409', 'Descripcion': 'El id no puede quedar vacío', 'Contribuyente': ''}, 400       
                     query = """delete from contribuyente where id = {};""".format(contribuyente.id)
                     cur.execute(query)
@@ -177,7 +181,7 @@ class Contribuyente(Resource):
             cur.close()
             conn.close()
             
-        return respuesta 
+        return respuesta
 
 class ContribuyenteList(Resource):
     def __init__(self):
