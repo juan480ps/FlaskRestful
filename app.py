@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from resources.contribuyente import Contribuyente
+from resources.autenticacion import Autenticacion
 from logging.config import dictConfig
 from flask_cors import CORS, cross_origin
 
@@ -22,12 +23,16 @@ dictConfig({
 
 app = Flask(__name__)
 CORS(app)
-cors = CORS(app, resources={r"/api/contribuyente/": {"origins": "*"}})
-app.config['CORS_HEADERS'] = 'Content-Type'
+# cors = CORS(app, resources={r"/api/contribuyente/": {"origins": "*"}})
+# cors = CORS(app, resources={r"/api/login/": {"origins": "*"}})
+# app.config['CORS_HEADERS'] = 'Content-Type'
+
+
 api = Api(app)
 
-
+api.add_resource(Autenticacion, '/api/login/')
 api.add_resource(Contribuyente, '/api/contribuyente/')
+
 
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def foo():
@@ -35,3 +40,6 @@ def foo():
 
 if __name__ == '__main__':
     app.run(debug=False)
+    
+    
+

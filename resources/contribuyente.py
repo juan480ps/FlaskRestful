@@ -172,7 +172,7 @@ class Contribuyente(Resource):
                     respuesta = {'codigo':0, 'descripcion': 'OK',  "objetoJson": "", 'listJson': item}
                 except Exception as e:
                     conn.rollback()
-                    respuesta = {'codigo':'400', 'Descripcion': "Ha ocurrido un error al insertar.", 'Contribuyente': item}, 500
+                    respuesta = {'codigo':'400', 'Descripcion': "Ha ocurrido un error al insertar.", 'Contribuyente': item}, 500                  
             
         except Exception as e:
             print(str(e))
