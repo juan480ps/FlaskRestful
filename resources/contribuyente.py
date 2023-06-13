@@ -180,7 +180,7 @@ class Contribuyente(Resource):
             
         except Exception as e:
             print(str(e))
-            respuesta = {'codigo':'400', 'Descripcion': 'Error al procesar la solicitud', 'Contribuyente': ''}, 400       
+            respuesta = {'codigo':'400', 'Descripcion': str(e), 'Contribuyente': ''}, 400       
         finally:
             cur.close()
             conn.close()
