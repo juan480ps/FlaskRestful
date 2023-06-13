@@ -35,7 +35,7 @@ api.add_resource(Contribuyente, '/api/contribuyente/')
 
 @app.route("/")
 def hello():
-    return "Welcome to Flask Application!"
+    return "Flask Application!"
 
 
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
